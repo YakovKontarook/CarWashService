@@ -45,3 +45,6 @@ create table user_roles
     role_id integer not null references roles (id),
     primary key (user_id, role_id)
 );
+
+insert into roles (name) values ('ROLE_USER');
+insert into roles (name) values ('ROLE_ADMIN');
