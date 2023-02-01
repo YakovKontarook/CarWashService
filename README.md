@@ -49,3 +49,7 @@ In the table user_roles change role_id to '2'
 - Click on 'Authorize' button and paste your token
 
 ### 6) Use any andpoint on http://localhost:8080/swagger-ui/
+
+# NOTE 
+Sometimes you need to change time settings of Database in a development environment 
+In Intellij Idea: Data Sources and Drivers -> Options -> Make sure timezone matches your timezone
