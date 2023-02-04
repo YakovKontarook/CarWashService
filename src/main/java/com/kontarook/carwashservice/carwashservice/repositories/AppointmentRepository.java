@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
 
-    @Transactional
+
     @Query("SELECT a FROM Appointment a WHERE (a.startTime BETWEEN :start_time AND :end_time) " +
             "OR (a.endTime BETWEEN :start_time AND :end_time) " +
             "OR (:start_time BETWEEN a.startTime AND a.endTime) " +
@@ -22,7 +22,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> checkAppointmentTimeIsFree(
             @Param("start_time") LocalDateTime start_time, @Param("end_time") LocalDateTime end_time);
 
-    @Transactional
+
     @Query(value = "WITH available_appointments AS " +
             "(SELECT * " +
             "FROM appointments a " +
