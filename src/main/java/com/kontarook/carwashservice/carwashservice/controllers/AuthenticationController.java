@@ -6,13 +6,9 @@ import com.kontarook.carwashservice.carwashservice.exceptions.UserNotFoundExcept
 import com.kontarook.carwashservice.carwashservice.services.impl.UserServiceImpl;
 import com.kontarook.carwashservice.carwashservice.utils.AuthenticationRequest;
 import com.kontarook.carwashservice.carwashservice.utils.ErrorResponse;
-import com.kontarook.carwashservice.carwashservice.utils.ResponseBuilder;
 import com.kontarook.carwashservice.carwashservice.utils.SignUpRequest;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,53 +27,39 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @ApiOperation("Login")
-    public ResponseEntity<Object> login(@RequestBody AuthenticationRequest authRequest) {
+    public String login(@RequestBody AuthenticationRequest authRequest) {
 
         String token = userServiceImpl.login(authRequest);
-
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("token", token)
-                .build(), HttpStatus.OK);
+        return token;
     }
 
     @PostMapping("/signup")
     @ApiOperation("Signup")
-    public ResponseEntity signUp(@RequestBody @Valid SignUpRequest signUpRequest, BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(new ResponseBuilder("Ошибка регистрации")
-                    .put("Error", bindingResult.getFieldError().getDefaultMessage())
-                    .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+    public User signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
 
         User registeredUser = userServiceImpl.signUp(signUpRequest);
-
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("User", registeredUser)
-                .build(), HttpStatus.OK);
+        return registeredUser;
     }
 
     @ExceptionHandler({UserNotFoundException.class})
-    private ResponseEntity<ErrorResponse> authenticationException(UserNotFoundException e) {
+    private ErrorResponse authenticationException(UserNotFoundException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
         );
         log.error(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return response;
     }
 
     @ExceptionHandler({JwtAuthenticationException.class})
-    private ResponseEntity<ErrorResponse> authenticationException(JwtAuthenticationException e) {
+    private ErrorResponse authenticationException(JwtAuthenticationException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
         );
         log.error(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return response;
     }
-
-
 }
 
 

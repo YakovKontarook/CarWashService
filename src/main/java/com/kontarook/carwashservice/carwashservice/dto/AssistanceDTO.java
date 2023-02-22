@@ -2,6 +2,8 @@ package com.kontarook.carwashservice.carwashservice.dto;
 
 public class AssistanceDTO {
 
+    private Integer id;
+
     private String name;
 
     private Double price;
@@ -9,6 +11,14 @@ public class AssistanceDTO {
     private String description;
 
     private Integer duration;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

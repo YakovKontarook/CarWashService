@@ -13,6 +13,8 @@ import java.util.List;
 
 public class AppointmentDTO {
 
+    private Integer id;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ApiModelProperty(
             example = "[\"...\",\"...\",\"...\",\"...\"]",
@@ -24,29 +26,24 @@ public class AppointmentDTO {
     private User user;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(hidden = true)
     private List<Assistance> assistances = new ArrayList<>();
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
-    @ApiModelProperty(example = "dd-MM-yyyy HH:mm", hidden = true)
+    @ApiModelProperty(example = "dd-MM-yyyy HH:mm")
     private LocalDateTime startTime;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(hidden = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime endTime;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(hidden = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime created;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(hidden = true)
     private Double totalPrice;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(hidden = true)
     private String tilStart;
 
     public void setTilStart(LocalDateTime startTime) {
@@ -67,6 +64,14 @@ public class AppointmentDTO {
         } else if (LocalDateTime.now().isAfter(endTime)) {
             tilStart = "Ваша запись закончилась";
         }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public List<Integer> getAssistancesIds() {

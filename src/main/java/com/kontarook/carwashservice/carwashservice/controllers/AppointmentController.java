@@ -7,13 +7,10 @@ import com.kontarook.carwashservice.carwashservice.exceptions.UserNotFoundExcept
 import com.kontarook.carwashservice.carwashservice.services.impl.AppointmentServiceImpl;
 import com.kontarook.carwashservice.carwashservice.utils.AppointmentOnTimeRequest;
 import com.kontarook.carwashservice.carwashservice.utils.ErrorResponse;
-import com.kontarook.carwashservice.carwashservice.utils.ResponseBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -35,115 +32,104 @@ public class AppointmentController {
 
     @PostMapping("/")
     @ApiOperation("Add a new appointment on the nearest free time")
-    public ResponseEntity<Object> add(@RequestBody AppointmentDTO appointmentDto) {
+    public AppointmentDTO add(@RequestBody AppointmentDTO appointmentDto) {
         AppointmentOnTimeRequest appointment = new AppointmentOnTimeRequest();
         appointment.setAppointmentDTO(appointmentDto);
         AppointmentDTO appointmentDTO = appointmentServiceImpl.createAppointment(appointment);
 
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("Запись", appointmentDTO).build(), HttpStatus.OK);
+        return appointmentDTO;
     }
 
     @PostMapping("/on-time")
     @ApiOperation("Add a new appointment on a specific time")
-    public ResponseEntity<Object> addAppointmentOnSpecificTime(
+    public AppointmentDTO addAppointmentOnSpecificTime(
             @RequestBody AppointmentOnTimeRequest appointmentOnTimeRequest) {
 
         AppointmentDTO appointmentDTO = appointmentServiceImpl
                 .createAppointment(appointmentOnTimeRequest);
 
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("Запись", appointmentDTO).build(), HttpStatus.OK);
+        return appointmentDTO;
     }
 
     @GetMapping("/admin/all")
     @ApiOperation("Get all appointments (Admin rights only)")
-    public ResponseEntity<Object> getAll() {
+    public List<AppointmentDTO> getAll() {
 
         List<AppointmentDTO> appointments = appointmentServiceImpl.getAll();
 
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("Все записи", appointments)
-                .build(), HttpStatus.OK);
+        return appointments;
     }
 
     @GetMapping("/admin/{id}")
     @ApiOperation("Get appointment by Appointment_ID (Admin rights only)")
-    public ResponseEntity<Object> get(@PathVariable Integer id) {
+    public AppointmentDTO get(@PathVariable Integer id) {
             AppointmentDTO appointmentDTO = appointmentServiceImpl.get(id);
 
-            return new ResponseEntity<>(new ResponseBuilder()
-                    .put("Запись", appointmentDTO)
-                    .build(), HttpStatus.OK);
+            return appointmentDTO;
     }
 
     @GetMapping("/user")
     @ApiOperation("Get appointments user is waiting")
-    public ResponseEntity<Object> getWaitingAssistanceByUser() {
+    public List<AppointmentDTO> getWaitingAssistanceByUser() {
 
         List<AppointmentDTO> appointments = appointmentServiceImpl.getWaitingAssistanceByUser();
 
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("Ваши записи", appointments)
-                .build(), HttpStatus.OK);
+        return appointments;
     }
 
     @GetMapping("/user/history")
     @ApiOperation("Get history of the user appointments")
-    public ResponseEntity<Object> getUserHistory() {
+    public List<AppointmentDTO> getUserHistory() {
 
         List<AppointmentDTO> appointments = appointmentServiceImpl.getUserHistory();
 
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("Ваши записи", appointments)
-                .build(), HttpStatus.OK);
+        return appointments;
     }
 
     @DeleteMapping("/admin/{id}")
     @ApiOperation("Delete any appointment by id (Admin rights)")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public AppointmentDTO delete(@PathVariable Integer id) {
 
         AppointmentDTO appointmentDTO = appointmentServiceImpl.delete(id);
-        return new ResponseEntity<>(new ResponseBuilder()
-                .put("Запись удалена", appointmentDTO).build(), HttpStatus.OK);
+        return appointmentDTO;
     }
 
     @ExceptionHandler(AppointmentException.class)
-    private ResponseEntity<ErrorResponse> AppointmentNotFoundHandleException(AppointmentException e) {
+    private ErrorResponse AppointmentNotFoundHandleException(AppointmentException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return response;
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<ErrorResponse> UserNotFoundHandleException(UserNotFoundException e) {
+    private ErrorResponse UserNotFoundHandleException(UserNotFoundException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
         );
         log.error(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return response;
     }
 
     @ExceptionHandler(AssistanceException.class)
-    private ResponseEntity<ErrorResponse> UserNotFoundHandleException(AssistanceException e) {
+    private ErrorResponse UserNotFoundHandleException(AssistanceException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
                 LocalDateTime.now()
         );
         log.error(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return response;
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    private ResponseEntity<ErrorResponse> UserNotFoundHandleException(DateTimeParseException e) {
+    private ErrorResponse UserNotFoundHandleException(DateTimeParseException e) {
         ErrorResponse response = new ErrorResponse(
                 "Неверный формат даты",
                 LocalDateTime.now()
         );
         log.error(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return response;
     }
 }
